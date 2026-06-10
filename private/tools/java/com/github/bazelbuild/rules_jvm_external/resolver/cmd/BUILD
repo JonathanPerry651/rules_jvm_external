@@ -3,7 +3,13 @@ load("@rules_jvm_external//:defs.bzl", "artifact")
 
 java_library(
     name = "cmd",
-    srcs = glob(["*.java"]),
+    srcs = [
+        "AbstractMain.java",
+        "ConfigArtifact.java",
+        "ExternalResolverConfig.java",
+        "ResolverConfig.java",
+        "StarlarkRepr.java",
+    ],
     visibility = [
         "//visibility:public",
     ],

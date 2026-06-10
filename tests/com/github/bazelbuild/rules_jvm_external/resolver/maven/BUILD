@@ -85,3 +85,23 @@ java_test(
         ),
     ],
 )
+
+java_test(
+    name = "MetadataServiceTest",
+    size = "small",
+    srcs = ["MetadataServiceTest.java"],
+    test_class = "com.github.bazelbuild.rules_jvm_external.resolver.maven.MetadataServiceTest",
+    deps = [
+        "//private/tools/java/com/github/bazelbuild/rules_jvm_external",
+        "//private/tools/java/com/github/bazelbuild/rules_jvm_external/resolver",
+        "//private/tools/java/com/github/bazelbuild/rules_jvm_external/resolver/remote",
+        artifact(
+            "com.google.guava:guava",
+            repository_name = "rules_jvm_external_deps",
+        ),
+        artifact(
+            "junit:junit",
+            repository_name = "regression_testing_coursier",
+        ),
+    ],
+)
