@@ -4,14 +4,12 @@ load("@rules_jvm_external//:defs.bzl", "artifact")
 java_library(
     name = "remote",
     srcs = [
-        "DependencyMetadata.java",
         "DownloadResult.java",
         "Downloader.java",
         "EmptyResponse.java",
         "FileCacheMetadataService.java",
         "HttpDownloader.java",
         "LocalMetadataService.java",
-        "MetadataService.java",
         "UriNotFoundException.java",
     ],
     visibility = [
@@ -23,6 +21,7 @@ java_library(
         "META-INF/services/com.github.bazelbuild.rules_jvm_external.resolver.remote.MetadataService",
     ],
     deps = [
+        ":api",
         "//private/tools/java/com/github/bazelbuild/rules_jvm_external",
         "//private/tools/java/com/github/bazelbuild/rules_jvm_external/jar:IndexJar-lib",
         "//private/tools/java/com/github/bazelbuild/rules_jvm_external/resolver",
@@ -49,5 +48,28 @@ java_library(
             "org.codehaus.plexus:plexus-xml",
             repository_name = "rules_jvm_external_deps",
         ),
+    ],
+)
+
+java_library(
+    name = "api",
+    srcs = [
+        "DependencyMetadata.java",
+        "MetadataService.java",
+        "//private/tools/java/com/github/bazelbuild/rules_jvm_external/resolver:Artifact.java",
+        "//private/tools/java/com/github/bazelbuild/rules_jvm_external/resolver:ResolutionRequest.java",
+    ],
+    visibility = [
+        "//visibility:public",
+    ],
+    deps = [
+        "//private/tools/java/com/github/bazelbuild/rules_jvm_external",
+        artifact(
+            "com.google.guava:guava",
+            repository_name = "rules_jvm_external_deps",
+        ),
+    ],
+    exports = [
+        "//private/tools/java/com/github/bazelbuild/rules_jvm_external",
     ],
 )

@@ -115,3 +115,25 @@ java_binary(
         "//private/tools/java/com/github/bazelbuild/rules_jvm_external/resolver/netrc",
     ],
 )
+
+java_library(
+    name = "maven-resolver-lib",
+    srcs = [
+        "MavenMain.java",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":maven",
+        "//private/tools/java/com/github/bazelbuild/rules_jvm_external/resolver",
+        "//private/tools/java/com/github/bazelbuild/rules_jvm_external/resolver/cmd",
+        "//private/tools/java/com/github/bazelbuild/rules_jvm_external/resolver/events",
+        "//private/tools/java/com/github/bazelbuild/rules_jvm_external/resolver/netrc",
+    ],
+    exports = [
+        ":maven",
+        "//private/tools/java/com/github/bazelbuild/rules_jvm_external/resolver",
+        "//private/tools/java/com/github/bazelbuild/rules_jvm_external/resolver/cmd",
+        "//private/tools/java/com/github/bazelbuild/rules_jvm_external/resolver/events",
+        "//private/tools/java/com/github/bazelbuild/rules_jvm_external/resolver/netrc",
+    ],
+)

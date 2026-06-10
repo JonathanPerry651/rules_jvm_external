@@ -1,14 +1,24 @@
 load("@rules_java//java:java_library.bzl", "java_library")
 load("//private/rules:artifact.bzl", "artifact")
 
+exports_files(["Artifact.java", "ResolutionRequest.java"])
+
+
 java_library(
     name = "resolver",
-    srcs = glob(["*.java"]),
+    srcs = glob(
+        ["*.java"],
+        exclude = [
+            "Artifact.java",
+            "ResolutionRequest.java",
+        ],
+    ),
     visibility = [
         "//private/tools/java:__subpackages__",
         "//tests/com/github/bazelbuild/rules_jvm_external:__subpackages__",
     ],
     deps = [
+        "//private/tools/java/com/github/bazelbuild/rules_jvm_external/resolver/remote:api",
         "//private/tools/java/com/github/bazelbuild/rules_jvm_external",
         artifact(
             "com.google.guava:guava",
@@ -26,5 +36,8 @@ java_library(
             "org.apache.maven.resolver:maven-resolver-api",
             repository_name = "rules_jvm_external_deps",
         ),
+    ],
+    exports = [
+        "//private/tools/java/com/github/bazelbuild/rules_jvm_external/resolver/remote:api",
     ],
 )

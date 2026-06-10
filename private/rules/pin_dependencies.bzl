@@ -97,10 +97,28 @@ def _pin_dependencies_impl(ctx):
     return [
         DefaultInfo(
             executable = script,
-            files = depset([script, config_file]),
+            files = depset([script, config_file, hash_file]),
             runfiles = ctx.runfiles(files = [script, config_file, hash_file]).merge(ctx.attr.resolver[DefaultInfo].default_runfiles),
         ),
+        PinInfo(
+            config_file = config_file,
+            hash_file = hash_file,
+            lock_file = ctx.attr.lock_file,
+            dependency_index = ctx.attr.dependency_index,
+            jvm_flags = ctx.attr.jvm_flags,
+        ),
     ]
+
+PinInfo = provider(
+    doc = "Provides configuration files and metadata for the pin runnable",
+    fields = {
+        "config_file": "The configuration JSON file",
+        "hash_file": "The input hash JSON file",
+        "lock_file": "The output lock file path",
+        "dependency_index": "The output dependency index path",
+        "jvm_flags": "JVM flags",
+    },
+)
 
 pin_dependencies = rule(
     _pin_dependencies_impl,
@@ -137,3 +155,4 @@ pin_dependencies = rule(
         ),
     },
 )
+

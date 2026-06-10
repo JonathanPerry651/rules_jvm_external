@@ -25,3 +25,4 @@ maven_version_test_suite()
 proxy_test_suite()
 
 version_catalogs_test_suite()
+

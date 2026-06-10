@@ -81,3 +81,35 @@ java_binary(
         "//private/tools/java/com/github/bazelbuild/rules_jvm_external/resolver/netrc",
     ],
 )
+
+java_library(
+    name = "gradle-resolver-lib",
+    srcs = [
+        "GradleMain.java",
+    ],
+    resources = ["logback.xml"],
+    resource_strip_prefix = "private/tools/java/com/github/bazelbuild/rules_jvm_external/resolver/gradle",
+    visibility = ["//visibility:public"],
+    deps = [
+        ":gradle",
+        "//private/tools/java/com/github/bazelbuild/rules_jvm_external/resolver",
+        "//private/tools/java/com/github/bazelbuild/rules_jvm_external/resolver/cmd",
+        "//private/tools/java/com/github/bazelbuild/rules_jvm_external/resolver/events",
+        "//private/tools/java/com/github/bazelbuild/rules_jvm_external/resolver/netrc",
+        artifact(
+            "ch.qos.logback:logback-classic",
+            repository_name = "rules_jvm_external_deps",
+        ),
+    ],
+    exports = [
+        ":gradle",
+        "//private/tools/java/com/github/bazelbuild/rules_jvm_external/resolver",
+        "//private/tools/java/com/github/bazelbuild/rules_jvm_external/resolver/cmd",
+        "//private/tools/java/com/github/bazelbuild/rules_jvm_external/resolver/events",
+        "//private/tools/java/com/github/bazelbuild/rules_jvm_external/resolver/netrc",
+        artifact(
+            "ch.qos.logback:logback-classic",
+            repository_name = "rules_jvm_external_deps",
+        ),
+    ],
+)

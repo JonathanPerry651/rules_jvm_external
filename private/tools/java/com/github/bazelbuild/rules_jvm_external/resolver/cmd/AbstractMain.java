@@ -37,7 +37,10 @@ import com.github.bazelbuild.rules_jvm_external.resolver.remote.HttpDownloader;
 import com.github.bazelbuild.rules_jvm_external.resolver.remote.LocalMetadataService;
 import com.github.bazelbuild.rules_jvm_external.resolver.remote.MetadataService;
 import com.github.bazelbuild.rules_jvm_external.resolver.remote.UriNotFoundException;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Optional;
+import java.util.ServiceLoader;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedMap;
 import com.google.common.graph.Graph;
@@ -119,26 +122,20 @@ public abstract class AbstractMain {
     LocalMetadataService localMetadataService = new LocalMetadataService(downloader);
 
     MetadataService metadataService = null;
-    String serviceClassName = System.getenv("RJE_METADATA_SERVICE");
-    if (serviceClassName == null) {
-      serviceClassName = System.getProperty("rules_jvm_external.metadata_service");
-    }
-    if (serviceClassName != null && !serviceClassName.isEmpty()) {
-      try {
-        metadataService = (MetadataService) Class.forName(serviceClassName)
-            .getDeclaredConstructor()
-            .newInstance();
-        listener.onEvent(new PhaseEvent("Using metadata service: " + serviceClassName));
-      } catch (Exception e) {
-        throw new RuntimeException("Failed to instantiate metadata service: " + serviceClassName, e);
-      }
-    } else {
-      java.util.ServiceLoader<MetadataService> loader = java.util.ServiceLoader.load(MetadataService.class);
-      java.util.Iterator<MetadataService> iterator = loader.iterator();
+    ServiceLoader<MetadataService> loader = ServiceLoader.load(MetadataService.class);
+    Iterator<MetadataService> iterator = loader.iterator();
+    if (iterator.hasNext()) {
+      metadataService = iterator.next();
       if (iterator.hasNext()) {
-        metadataService = iterator.next();
-        listener.onEvent(new PhaseEvent("Using metadata service loaded via SPI: " + metadataService.getClass().getName()));
+        List<String> foundServices = new ArrayList<>();
+        foundServices.add(metadataService.getClass().getName());
+        foundServices.add(iterator.next().getClass().getName());
+        while (iterator.hasNext()) {
+          foundServices.add(iterator.next().getClass().getName());
+        }
+        throw new IllegalStateException("Multiple MetadataService implementations found via SPI: " + foundServices);
       }
+      listener.onEvent(new PhaseEvent("Using metadata service loaded via SPI: " + metadataService.getClass().getName()));
     }
 
     if (metadataService != null) {

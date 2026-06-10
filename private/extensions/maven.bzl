@@ -121,6 +121,7 @@ install = tag_class(
         "ignore_empty_files": attr.bool(default = False, doc = "Treat jars that are empty as if they were not found."),
         "repin_instructions": attr.string(doc = "Instructions to re-pin the repository if required. Many people have wrapper scripts for keeping dependencies up to date, and would like to point users to that instead of the default. Only honoured for the root module."),
         "additional_coursier_options": attr.string_list(doc = "Additional options that will be passed to coursier."),
+        "resolver_plugin_libraries": attr.label_list(default = [], doc = "Jars or libraries containing custom MetadataService SPI implementations to add to the resolver classpath."),
     },
 )
 
@@ -701,6 +702,7 @@ def maven_impl(mctx):
                 repo["fetch_javadoc"] = install.fetch_javadoc
                 repo["fetch_sources"] = install.fetch_sources
                 repo["resolver"] = install.resolver
+                repo["resolver_plugin_libraries"] = install.resolver_plugin_libraries
                 repo["strict_visibility"] = install.strict_visibility
                 if len(install.repositories):
                     mapped_repos = []
@@ -770,7 +772,7 @@ def maven_impl(mctx):
                 additional_coursier_options = repo.get("additional_coursier_options"),
             )
         else:
-            workspace_prefix = "@@"
+            workspace_prefix = "@"
 
             # Only the coursier resolver allows the lock file to be omitted.
             unpinned_maven_pin_command_alias(
@@ -819,6 +821,7 @@ def maven_impl(mctx):
                 fetch_sources = repo.get("fetch_sources"),
                 fetch_javadoc = repo.get("fetch_javadoc"),
                 resolver = repo.get("resolver", _DEFAULT_RESOLVER),
+                resolver_plugin_libraries = repo.get("resolver_plugin_libraries", []),
                 generate_compat_repositories = False,
                 maven_install_json = repo.get("lock_file"),
                 dependency_index = repo.get("dependency_index"),
